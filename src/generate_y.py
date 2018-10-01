@@ -4,7 +4,7 @@ import skimage.measure
 import os
 
 '''
-This is a file to generate 
+This is a file to generate wqv and wth 
 '''
 
 def data_to_y(load_path, name_list, save_path):
