@@ -13,10 +13,10 @@ import time
 
 def load_data(dirx, diry, case):
     
-    with open(dirx + case, 'rb') as x:
+    with open(dirx + case + '.pkl', 'rb') as x:
         casex = pickle.load(x)
     
-    with open(diry + case, 'rb') as y:
+    with open(diry + case + '.pkl', 'rb') as y:
         casey = pickle.load(y)
 
     # X features concatenate
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     tStart = time.time()
     dirx = '../feature/'
     diry = '../target/'
-    case = 'n01.pkl'
+    case = 'n01'
     X, y = load_data(dirx, diry, case)
 
     linear_model = LinearRegression()
@@ -44,3 +44,20 @@ if __name__ == '__main__':
 
     tEnd = time.time()
     print('It cost %f sec' %(tEnd - tStart))
+
+    # Plot
+    save_path = '../predict/LinearRegression/'
+
+    all_case = os.listdir('../feature/')
+    for case in all_case:
+        print('Now procession %s' %case)
+        caseName = case[0:3]
+        
+        # load data
+        X_pre,y = load_data(dirx, diry, caseName)
+        # pre
+        y_pre = linear_model.predict(X_pre)
+        y_pre = y_pre.reshape(73,34,33,33)
+        with open(save_path + caseName + '.pkl', 'wb') as f:
+            pickle.dump(y_pre, f)
+
