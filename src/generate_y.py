@@ -53,7 +53,10 @@ def data_to_y(load_path, name_list, save_path):
         print('../data/target/' + name)
         with open(save_path + name, 'wb') as fout:
             pickle.dump(out_dict, fout)
-path = '../data/'
-save_path = '../target/'
-name_list = os.listdir(path)
-data_to_y(path, name_list, save_path)
+
+if __name__ == '__main__':
+    path = '../data/'
+    save_path = '../target/'
+    name_list = os.listdir(path)
+    print('The data we will process : %s' %name_list)
+    data_to_y(path, name_list, save_path)

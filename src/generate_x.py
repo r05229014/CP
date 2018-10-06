@@ -33,4 +33,5 @@ if __name__ == '__main__':
     path = '../data/'
     save_path = '../feature/'
     name_list = os.listdir(path)
+    print('The data we want to traslate to feature/ : %s' %name_list)
     data_to_y(path, name_list, save_path)
