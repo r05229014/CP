@@ -3,7 +3,7 @@ import sys
 import random
 import pickle
 import os
-
+from sklearn.preprocessing import StandardScaler
 
 def load_alldata(path_x, path_y):
     TEST_SPLIT = 0.2
@@ -86,9 +86,26 @@ def load_alldata(path_x, path_y):
     print('X_test shape is : ', X_test.shape)
     print('y_train shape is : ', y_train.shape)
     print('y_test shape is : ', y_test.shape)
-def Preprocessing_RNN():
-    pass
 
-path_x = '../feature/'
-path_y = '../target/'
-load_alldata(path_x, path_y)
+    return X_train, X_test, y_train, y_test
+
+
+def Preprocessing_DNN(X_train, X_test, y_train, y_test):
+    X_train = X_train.reshape(-1,5)
+    X_test = X_test.reshape(-1,5)
+    y_train = y_train.reshape(-1,1)
+    y_test = y_test.reshape(-1,1)
+    
+    sc = StandardScaler()
+
+    # normalize
+    for feature in range(5):
+        X_train[:,feature:feature+1] = sc.fit_transform(X_train[:, feature:feature+1])
+        X_test[:,feature:feature+1] = sc.fit_transform(X_test[:, feature:feature+1])
+    
+    return X_train, X_test, y_train, y_test 
+
+#path_x = '../feature/'
+#path_y = '../target/'
+#X_train, X_test, X_train, X_test = load_alldata(path_x, path_y)
+#Preprocessing_RNN(X_train, X_test, X_train, X_test)
