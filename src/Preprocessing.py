@@ -90,6 +90,14 @@ def load_alldata(path_x, path_y):
     return X_train, X_test, y_train, y_test
 
 
+def Preprocessing_Linear(X_train, X_test, y_train, y_test):
+    X_train = X_train.reshape(-1,5)
+    X_test = X_test.reshape(-1,5)
+    y_train = y_train.reshape(-1,1)
+    y_test = y_test.reshape(-1,1)
+    
+    return X_train, X_test, y_train, y_test 
+
 def Preprocessing_DNN(X_train, X_test, y_train, y_test):
     X_train = X_train.reshape(-1,5)
     X_test = X_test.reshape(-1,5)

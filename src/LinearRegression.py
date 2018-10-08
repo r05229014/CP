@@ -9,35 +9,20 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.mlab as mlab
 import time
+from Preprocessing import load_alldata, Preprocessing_Linear
 
-
-def load_data(dirx, diry, case):
-    
-    with open(dirx + case, 'rb') as x:
-        casex = pickle.load(x)
-    
-    with open(diry + case, 'rb') as y:
-        casey = pickle.load(y)
-
-    # X features concatenate
-    for key, value in casex.items():
-        casex[key] = value.reshape(73 *34* 33* 33, 1)
-    X = np.concatenate((casex['u'], casex['v'], casex['w'], casex['th'], casex['qv']), axis=-1)
-    # y target
-    y = casey['wqv'].reshape(73*34*33*33, 1)
-    
-    return X, y
 
 if __name__ == '__main__':
 
     tStart = time.time()
-    dirx = '../feature/'
-    diry = '../target/'
-    case = 'n01.pkl'
-    X, y = load_data(dirx, diry, case)
+    dir_x = '../feature/'
+    dir_y = '../target/'
+    X_train, X_test, y_train, y_test = load_alldata(dir_x, dir_y)
+    X_train, X_test, y_train, y_test = Preprocessing_Linear(X_train, X_test, y_train, y_test)
+    #X, y = load_data(dirx, diry, case)
 
     linear_model = LinearRegression()
-    linear_model.fit(X,y)
+    linear_model.fit(X_train,y_train)
 
     print(linear_model.coef_)
     print(linear_model.intercept_ )
