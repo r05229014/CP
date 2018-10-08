@@ -3,7 +3,6 @@ import sys
 import random
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
-from keras import Model
 from keras.models import Sequential, load_model
 from keras.layers import LeakyReLU, TimeDistributed
 from keras.layers.core import Dense, Flatten, Dropout
@@ -12,32 +11,18 @@ from keras.layers.convolutional import Convolution3D, MaxPooling3D, Convolution2
 from keras.callbacks import *
 from keras.layers.normalization import BatchNormalization
 from keras import optimizers
-from keras.utils import multi_gpu_model
 import os 
 import time
-
-
-class ModelMGPU(Model):
-    def __init__(self, ser_model, gpus):
-        pmodel = multi_gpu_model(ser_model, gpus)
-        self.__dict__.update(pmodel.__dict__)
-        self._smodel = ser_model
-
-    def __getattribute__(self, attrname):
-        '''Override load and save methods to be used from the serial-model. The
-        serial-model holds references to the weights in the multi-gpu model.
-        '''
-        # return Model.__getattribute__(self, attrname)
-        if 'load' in attrname or 'save' in attrname:
-            return getattr(self._smodel, attrname)
-            
-        return super(ModelMGPU, self).__getattribute__(attrname)
+#from keras.utils import multi_gpu_model
+# own modile
+from Preprocessing import load_alldata, Preprocessing_RNN_vir
+from config import ModelMGPU
 
 
 def RNN():
     print("Build model!!")
     model = Sequential()
-    model.add(LSTM(256, return_sequences=True, input_shape=(70,5)))
+    model.add(LSTM(256, return_sequences=True, input_shape=(34,5)))
     model.add(LSTM(256, return_sequences=True))
     model.add(LSTM(256, return_sequences=True))
     model.add(TimeDistributed(Dense(1)))
@@ -47,3 +32,33 @@ def RNN():
     #model.add(Dense(70, activation='linear'))
     return model
 
+
+if __name__ == '__main__':
+
+    # path 
+    dir_x = '../feature/'
+    dir_y = '../target/'
+    X_train, X_test, y_train, y_test = load_alldata(dir_x, dir_y)
+    X_train, X_test, y_train, y_test = Preprocessing_RNN_vir(X_train, X_test, y_train, y_test)
+
+    model = RNN()
+    parallel_model = ModelMGPU(model, 3)
+    parallel_model.compile(optimizer = 'adam', loss='mean_squared_error')
+    print(model.summary())
+    dirpath = "../model/RNN_3_256/"
+    if not os.path.exists(dirpath):
+        os.mkdir(dirpath)
+
+    filepath= dirpath + "/weights-improvement-{epoch:03d}-{loss:.3e}.hdf5"
+    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', 
+                                save_best_only=False, period=2)
+    earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
+    history = parallel_model.fit(X_train,y_train, validation_split=0.1 , batch_size=256, epochs=150, shuffle=True, callbacks = [checkpoint])
+
+    history_path = '../history/RNN_3_256/'
+    with open(history_path + 'history.pkl', 'wb') as f:
+        pickle.dump(history.history, f)
+
+    tEnd = time.time()
+
+    print("It cost %f sec" %(tEnd - tStart))

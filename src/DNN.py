@@ -46,21 +46,21 @@ if __name__ == '__main__':
     print(model.summary())
 
     # model save path
-    dirpath = "../model/DNN/"
+    dirpath = "../model/DNN_10layer_512/"
     if not os.path.exists(dirpath):
         os.mkdir(dirpath)
     
     # path and callbacks
     filepath= dirpath + "/weights-improvement-{epoch:03d}-{loss:.3e}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_loss', 
-                                save_best_only=False, period=5)
+                                save_best_only=False, period=2)
     earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
     
     # training
     history = parallel_model.fit(X_train , y_train, validation_split=0.1, batch_size=4096, epochs=150, shuffle=True, callbacks = [checkpoint, earlystopper])
     
-    # save history
-    history_path = '../history/DNN/'
+    # save history<
+    history_path = '../history/DNN_10layer_512/'
     if not os.path.exists(history_path):
         os.mkdir(history_path)
     with open(history_path + 'DNN.pkl', 'wb') as f:
