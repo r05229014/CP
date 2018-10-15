@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.mlab as mlab
 import time
+from Preprocessing import load_alldata, Preprocessing_Linear
 
 
 def load_data(dirx, diry, case):
@@ -27,7 +28,7 @@ def load_data(dirx, diry, case):
     y = casey['wqv'].reshape(73*34*33*33, 1)
     
     return X, y
-
+'''
 if __name__ == '__main__':
 
     tStart = time.time()
@@ -60,4 +61,34 @@ if __name__ == '__main__':
         y_pre = y_pre.reshape(73,34,33,33)
         with open(save_path + caseName + '.pkl', 'wb') as f:
             pickle.dump(y_pre, f)
+'''
+
+if __name__ == '__main__':
+
+    tStart = time.time()
+    dirx = '../feature/'
+    diry = '../target/'
+    X_train, X_test, y_train, y_test = load_alldata(dirx, diry)
+    X_train, X_test, y_train, y_test = Preprocessing_Linear(X_train, X_test, y_train, y_test)
+
+    linear_model = LinearRegression()
+    linear_model.fit(X_train,y_train)
+
+    print(linear_model.coef_)
+    print(linear_model.intercept_ )
+
+    tEnd = time.time()
+    print('It cost %f sec' %(tEnd - tStart))
+
+    # Plot
+    save_path = '../predict/LinearRegression_test/'
+    plt.rcParams['agg.path.chunksize'] = 10000 
+    y_pre = linear_model.predict(X_test)
+    plt.scatter(y_test, y_pre)
+    plt.xlim(-0.02, 0.01)
+    plt.ylim(-0.02, 0.05)
+    plt.title('Linear Regression')
+    plt.xlabel('True')
+    plt.ylabel('Predict')
+    plt.savefig(save_path + 'Linear.png')
 
