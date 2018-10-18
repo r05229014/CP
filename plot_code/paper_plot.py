@@ -61,8 +61,8 @@ def paper_plot(save_path, tags_test, y_test):
     for t in range(vir_cloudy.shape[0]):
         print('ploting testing sampling %s' %t)
         plt.figure(t, figsize=(8,10))
-        plt.title('testing sample %s' %t)
         ax1 = plt.subplot2grid((4,2), (0,0), colspan=2, rowspan=2)
+        plt.suptitle('testing sample %s' %t)
         ax1.axis('off')
         cs = ax1.contourf(xx,yy,y_test_3000[t]*2.5*10**6, cmap=cm.Blues, vmax=8000, vmin=0, levels = np.arange(0, 8001, 1000))
         m = plt.cm.ScalarMappable(cmap=cm.Blues)
@@ -103,18 +103,20 @@ def paper_plot(save_path, tags_test, y_test):
 
 def main():
     plot_tar = sys.argv[1]
+    dirx = '../feature/'
+    diry = '../target/'
+    X_train, X_test, y_train, y_test = load_alldata(dirx, diry)
+    tags_train, tags_test = load_tags()
 
     if plot_tar == 'wqv':
         save_path = '../img/paper/'+ plot_tar +'/'
-        test = False
+        y_ = y_test
     elif plot_tar == 'Linear':
-        load_path = '../predict/LinearRegression/'
         save_path = '../img/paper/' + plot_tar + '/'
-        test = True
+        y_ = np.load('../predict/LinearRegression/testing.npy')
     elif plot_tar == 'DNN':
-        load_path = '../predict/DNN/'
         save_path = '../img/paper/' + plot_tar + '/'
-        test = True
+        y_ = np.load('../predict/DNN/testing.npy')
     else:
         sys.exit('Please input wqv, Linear, DNN or RNN you want to plot!!!')
 
@@ -122,12 +124,13 @@ def main():
     dir_name = save_path + 'testing/'
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
-    paper_plot(save_path, test)
+    paper_plot(save_path, tags_test, y_)
 
+if __name__ == '__main__':
+    main()
 
-dirx = '../feature/'
-diry = '../target/'
-X_train, X_test, y_train, y_test = load_alldata(dirx, diry)
-tags_train, tags_test = load_tags()
-save_path = '../img/paper/'+ 'wqv' +'/'
-paper_plot(save_path, tags_test, y_test)
+#dirx = '../feature/'
+#diry = '../target/'
+#X_train, X_test, y_train, y_test = load_alldata(dirx, diry)
+#tags_train, tags_test = load_tags()
+#paper_plot(save_path, tags_test, y_test)
