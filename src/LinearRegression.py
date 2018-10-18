@@ -29,3 +29,8 @@ if __name__ == '__main__':
 
     tEnd = time.time()
     print('It cost %f sec' %(tEnd - tStart))
+
+    # predict
+    y_pre = linear_model.predict(X_test)
+    y_pre = y_pre.reshape(137,34,33,33)
+    np.save('../predict/LinearRegression/testing.npy', y_pre)

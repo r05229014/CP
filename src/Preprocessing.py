@@ -54,10 +54,8 @@ def load_alldata(path_x, path_y):
     # shuffle
     indices = np.arange(X.shape[0])
     nb_test_samples = int(TEST_SPLIT * X.shape[0])
-    print(indices.shape)
     random.seed(777)
     random.shuffle(indices)
-    print(indices[0:10])
     X = X[indices]
     X_train = X[nb_test_samples:]
     X_test = X[0:nb_test_samples]
@@ -73,9 +71,9 @@ def load_alldata(path_x, path_y):
     return X_train, X_test, y_train, y_test
 
 
-dirx = '../feature/'
-diry = '../target/'
-load_alldata(dirx, diry)
+#dirx = '../feature/'
+#diry = '../target/'
+#load_alldata(dirx, diry)
 
 def Preprocessing_Linear(X_train, X_test, y_train, y_test):
     X_train = X_train.reshape(-1,5)
