@@ -117,6 +117,9 @@ def main():
     elif plot_tar == 'DNN':
         save_path = '../img/paper/' + plot_tar + '/'
         y_ = np.load('../predict/DNN/testing.npy')
+    elif plot_tar == 'RNN':
+        save_path = '../img/paper/' + plot_tar + '/'
+        y_ = np.load('../predict/RNN/testing.npy')
     else:
         sys.exit('Please input wqv, Linear, DNN or RNN you want to plot!!!')
 

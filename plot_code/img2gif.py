@@ -14,6 +14,7 @@ def img2gif(dir, case):
 
 case = sys.argv[1]
 png_dir = '../img/paper/'+ case +'/testing/'
+
 #name_list = os.listdir(png_dir)
 #for name in name_list:
 #    print('Now ploting : %s' %name_list)

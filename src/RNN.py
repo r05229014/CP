@@ -34,30 +34,41 @@ def RNN():
 
 
 if __name__ == '__main__':
-
-    # path 
+    tStart = time.time()
+    act = sys.argv[1]
+    # path
     dir_x = '../feature/'
     dir_y = '../target/'
     X_train, X_test, y_train, y_test = load_alldata(dir_x, dir_y)
     X_train, X_test, y_train, y_test = Preprocessing_RNN_vir(X_train, X_test, y_train, y_test)
 
-    model = RNN()
-    parallel_model = ModelMGPU(model, 3)
-    parallel_model.compile(optimizer = 'adam', loss='mean_squared_error')
-    print(model.summary())
-    dirpath = "../model/RNN_3_256/"
-    if not os.path.exists(dirpath):
-        os.mkdir(dirpath)
+    if act == 'train': 
+        model = RNN()
+        parallel_model = ModelMGPU(model, 3)
+        parallel_model.compile(optimizer = 'adam', loss='mean_squared_error')
+        print(model.summary())
+        dirpath = "../model/RNN_3_256/"
+        if not os.path.exists(dirpath):
+            os.mkdir(dirpath)
 
-    filepath= dirpath + "/weights-improvement-{epoch:03d}-{loss:.3e}.hdf5"
-    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', 
-                                save_best_only=False, period=2)
-    earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
-    history = parallel_model.fit(X_train,y_train, validation_split=0.1 , batch_size=256, epochs=150, shuffle=True, callbacks = [checkpoint])
+        filepath= dirpath + "/weights-improvement-{epoch:03d}-{loss:.3e}.hdf5"
+        checkpoint = ModelCheckpoint(filepath, monitor='val_loss', 
+                                     save_best_only=False, period=2)
+        earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
+        history = parallel_model.fit(X_train,y_train, validation_split=0.1 , batch_size=256, epochs=150, shuffle=True, callbacks = [checkpoint])
 
-    history_path = '../history/RNN_3_256/'
-    with open(history_path + 'history.pkl', 'wb') as f:
-        pickle.dump(history.history, f)
+        history_path = '../history/RNN_3_256/'
+        with open(history_path + 'history.pkl', 'wb') as f:
+            pickle.dump(history.history, f)
+
+    elif act == 'test':
+
+        model_path = sys.argv[2]
+        model = load_model(model_path)
+        y_pre = model.predict(X_test, batch_size=1024)
+        y_pre = y_pre.reshape(-1,33,33,34)
+        y_pre = np.swapaxes(y_pre, 1,3)
+        np.save('../predict/RNN/testing.npy', y_pre)
 
     tEnd = time.time()
 
