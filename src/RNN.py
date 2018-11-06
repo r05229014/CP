@@ -47,7 +47,7 @@ if __name__ == '__main__':
         parallel_model = ModelMGPU(model, 3)
         parallel_model.compile(optimizer = 'adam', loss='mean_squared_error')
         print(model.summary())
-        dirpath = "../model/RNN_3_256/"
+        dirpath = "../model/GAN_3_256/"
         if not os.path.exists(dirpath):
             os.mkdir(dirpath)
 
@@ -65,10 +65,10 @@ if __name__ == '__main__':
 
         model_path = sys.argv[2]
         model = load_model(model_path)
-        y_pre = model.predict(X_test, batch_size=1024)
+        y_pre = model.predict(X_train, batch_size=1024)
         y_pre = y_pre.reshape(-1,33,33,34)
         y_pre = np.swapaxes(y_pre, 1,3)
-        np.save('../predict/RNN/testing.npy', y_pre)
+        np.save('../predict/RNN/training.npy', y_pre)
 
     tEnd = time.time()
 

@@ -71,9 +71,9 @@ if __name__ == '__main__':
     elif act == 'test':
         model_path = sys.argv[2]
         model = load_model(model_path)
-        y_pre = model.predict(X_test, batch_size=1024)
-        y_pre = y_pre.reshape(137,34,33,33)
-        np.save('../predict/DNN/testing.npy', y_pre)
+        y_pre = model.predict(X_train, batch_size=1024)
+        y_pre = y_pre.reshape(-1,34,33,33)
+        np.save('../predict/DNN/training.npy', y_pre)
     
     else:
         print('Please type the action you want...')
